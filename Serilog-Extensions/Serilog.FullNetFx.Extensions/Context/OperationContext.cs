@@ -15,17 +15,27 @@ namespace Serilog.Context
     /// </summary>
     public sealed class OperationContext : IDisposable
     {
+        public enum LogMode
+        {
+            StartAndEnd,
+            StartOnly,
+            EndOnly,
+            EndOnlyOnWarning,
+            None
+        }
+
         private const string BeginOperationMessage =
-            "Beginning operation {TimedOperationId}: {TimedOperationDescription}";
+            "Beginning operation {OperationId} {OperationDescription}";
 
         private const string OperationExccededTimeMessage =
-            "Operation {TimedOperationId}: {TimedOperationDescription} exceeded the limit of {WarningLimit} by completing with status {Outcome} in {TimedOperationElapsed}  ({TimedOperationElapsedInMs} ms)";
+            "Operation {OperationId} {OperationDescription} exceeded the limit of {WarningLimit} by completing with status {Outcome} in {OperationElapsed}  ({OperationElapsedInMs} ms)";
 
         private const string OperationCompletedMessage =
-            "Completed operation {TimedOperationId}: {TimedOperationDescription} with status {Outcome} in {TimedOperationElapsed} ({TimedOperationElapsedInMs} ms)";
+            "Completed operation {OperationId} {OperationDescription} with status {Outcome} in {OperationElapsed} ({OperationElapsedInMs} ms)";
 
         private readonly ILogger _logger;
         private readonly LogEventLevel _level;
+        private readonly LogMode _logMode;
         private readonly TimeSpan? _warnIfExceeds;
         private readonly object _identifier;
         private readonly string _description;
@@ -43,12 +53,14 @@ namespace Serilog.Context
         /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
         /// <param name="description">A description for the operation.</param>
         /// <param name="level">The level used to write the operation details to the logger. By default this is the information level.</param>
+        /// <param name="logMode">Indicates what, if any, log entries should be writen and when.</param>
         /// <param name="warnIfExceeds">Specifies a limit, if it takes more than this limit, the level will be set to warning. By default this is not used.</param>
         /// <param name="autoSucceedOnExit">Specifies whether or not the operation should be marked with an outcome of <see cref="OperationOutcome.Success"/> if it completes without exception.</param>
         /// <param name="autoFailOnException">Specifies whether or not the operation should be marked with an outcome of <see cref="OperationOutcome.Fail"/> if an exception is detected.</param>
         /// <param name="propertyBag">A colletion of additional properties to associate with the current operation. This is typically an anonymous type.</param>
         internal OperationContext(ILogger logger,
                                   LogEventLevel level,
+                                  LogMode logMode,
                                   TimeSpan? warnIfExceeds,
                                   object identifier,
                                   string description,
@@ -58,6 +70,7 @@ namespace Serilog.Context
         {
             _logger = logger;
             _level = level;
+            _logMode = logMode;
             _warnIfExceeds = warnIfExceeds;
             _identifier = identifier;
             _description = description;
@@ -72,7 +85,10 @@ namespace Serilog.Context
                 _contextualPropertiesBookmark = PushProperties(propertyBag);
             }
 
-            _logger.Write(_level, BeginOperationMessage, _identifier, _description);
+            if (_logMode.ShouldWriteStart())
+            {
+                _logger.Write(_level, BeginOperationMessage, _identifier, _description);
+            }
 
             _sw = Stopwatch.StartNew();
         }
@@ -174,11 +190,15 @@ namespace Serilog.Context
                     _outcome = OperationOutcome.Success;
 
 
-                if (_warnIfExceeds.HasValue && _sw.Elapsed > _warnIfExceeds.Value)
+                if (_warnIfExceeds.HasValue && _sw.Elapsed > _warnIfExceeds.Value && _logMode.ShouldWriteEnd(LogEventLevel.Warning))
+                {
                     _logger.Write(LogEventLevel.Warning, OperationExccededTimeMessage, _identifier, _description, _warnIfExceeds.Value, _outcome, _sw.Elapsed, _sw.ElapsedMilliseconds);
-                else if (_outcome == OperationOutcome.Fail)
-                    _logger.Write(LogEventLevel.Warning, OperationCompletedMessage, _identifier, _description, _outcome, _sw.Elapsed, _sw.ElapsedMilliseconds);
-                else
+                }
+                else if (_outcome == OperationOutcome.Fail && _logMode.ShouldWriteEnd(LogEventLevel.Error))
+                {
+                    _logger.Write(LogEventLevel.Error, OperationCompletedMessage, _identifier, _description, _outcome, _sw.Elapsed, _sw.ElapsedMilliseconds);
+                }
+                else if (_logMode.ShouldWriteEnd(_level))
                     _logger.Write(_level, OperationCompletedMessage, _identifier, _description, _outcome, _sw.Elapsed, _sw.ElapsedMilliseconds);
             }
             finally
@@ -240,14 +260,16 @@ namespace Serilog.Context
                 if (values == null || values == ImmutableStack<object>.Empty)
                     return;
 
-                var currentAndParentOps = values.Take(2).ToArray();
+                // NOTE: removed logging the operation and parent separately for now as this they're redundent.
 
-                new PropertyEnricher(OperationIdName, currentAndParentOps[0]).Enrich(logEvent, propertyFactory);
+                //var currentAndParentOps = values.Take(2).ToArray();
 
-                if (currentAndParentOps.Length > 1)
-                {
-                    new PropertyEnricher(ParentOperationIdName, currentAndParentOps[1]).Enrich(logEvent, propertyFactory);
-                }
+                //new PropertyEnricher(OperationIdName, currentAndParentOps[0]).Enrich(logEvent, propertyFactory);
+
+                //if (currentAndParentOps.Length > 1)
+                //{
+                //    new PropertyEnricher(ParentOperationIdName, currentAndParentOps[1]).Enrich(logEvent, propertyFactory);
+                //}
 
                 new PropertyEnricher(OperationStackName, values).Enrich(logEvent, propertyFactory);
             }

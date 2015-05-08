@@ -1,0 +1,21 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Serilog.Extensions</id>
+    <version>$version$</version>
+    <authors>Richard Johnston</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Extensions for Serilog.</description>
+    <copyright>Copyright 2014</copyright>
+    <tags>serilog logging events semantic structured extensions</tags>
+  </metadata>
+  <files>
+    <!--<file src="Serilog.Extensions\Serilog.Extensions.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+    <file src="Serilog.Extensions\Serilog.Extensions.dll" target="lib\net45" />
+    <file src="Serilog.FullNetFx.Extensions\Serilog.FullNetFx.Extensions.dll" target="lib\net45" />-->
+
+    <file src="bin\Release\Serilog.Extensions.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+    <file src="bin\Release\Serilog.Extensions.dll" target="lib\net45" />
+    <file src="..\Serilog.FullNetFx.Extensions\bin\Release\Serilog.FullNetFx.Extensions.dll" target="lib\net45" />
+  </files>
+</package>

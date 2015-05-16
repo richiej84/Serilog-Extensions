@@ -28,7 +28,7 @@ namespace Serilog
             string identifier = null,
             object propertyBag = null,
             LogEventLevel level = LogEventLevel.Debug,
-            OperationContext.LogMode logMode = OperationContext.LogMode.EndOnlyOnWarning,
+            OperationContext.LogMode logMode = OperationContext.LogMode.StartAndEndOnlyOnWarningOrWorse,
             TimeSpan? warnIfExceeds = null,
             bool autoSucceedOnExit = true,
             bool autoFailOnException = true)
@@ -60,7 +60,7 @@ namespace Serilog
             this ILogger logger,
             string identifier,
             object propertyBag,
-            OperationContext.LogMode logMode = OperationContext.LogMode.EndOnlyOnWarning)
+            OperationContext.LogMode logMode = OperationContext.LogMode.StartAndEndOnlyOnWarningOrWorse)
         {
 
             return new OperationContext(logger,
@@ -84,7 +84,7 @@ namespace Serilog
         public static OperationContext BeginOperation(
             this ILogger logger,
             string identifier,
-            OperationContext.LogMode logMode = OperationContext.LogMode.EndOnlyOnWarning)
+            OperationContext.LogMode logMode = OperationContext.LogMode.StartAndEndOnlyOnWarningOrWorse)
         {
 
             return new OperationContext(logger,

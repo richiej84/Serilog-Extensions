@@ -15,35 +15,94 @@ namespace Serilog.Context
     /// </summary>
     public sealed class OperationContext : IDisposable
     {
+        ///// <summary>
+        ///// Determines what log entries should be written for an operation.
+        ///// </summary>
+        //public enum LogMode
+        //{
+        //    /// <summary>
+        //    /// Write log entries for both the start and end of the operation.
+        //    /// </summary>
+        //    StartAndEnd,
+
+        //    /// <summary>
+        //    /// Write a log entry only for the start of the operation.
+        //    /// </summary>
+        //    StartOnly,
+
+        //    /// <summary>
+        //    /// Write a log entry only for the end of the operation.
+        //    /// </summary>
+        //    EndOnly,
+
+        //    /// <summary>
+        //    /// Write a log entry only for the end of the operation and only if a warning or worse has occurred.
+        //    /// </summary>
+        //    EndOnlyOnWarning,
+
+        //    /// <summary>
+        //    /// Write no log entries for the operation.
+        //    /// </summary>
+        //    None
+        //}
+
         /// <summary>
         /// Determines what log entries should be written for an operation.
         /// </summary>
+        [Flags]
         public enum LogMode
         {
             /// <summary>
-            /// Write log entries for both the start and end of the operation.
-            /// </summary>
-            StartAndEnd,
-
-            /// <summary>
-            /// Write a log entry only for the start of the operation.
-            /// </summary>
-            StartOnly,
-
-            /// <summary>
-            /// Write a log entry only for the end of the operation.
-            /// </summary>
-            EndOnly,
-
-            /// <summary>
-            /// Write a log entry only for the end of the operation and only if it's a non-successful outcome.
-            /// </summary>
-            EndOnlyOnWarning,
-
-            /// <summary>
             /// Write no log entries for the operation.
             /// </summary>
-            None
+            None = 0,
+
+            /// <summary>
+            /// Write a log entry for the start of the operation.
+            /// </summary>
+            Start = 1,
+
+            /// <summary>
+            /// Write a log entry for the end of the operation.
+            /// </summary>
+            End = 2,
+
+            /// <summary>
+            /// Write a log entry for both the start and end of the operation.
+            /// </summary>
+            StartAndEnd = 3,
+
+            /// <summary>
+            /// Use in combination with writing the end operation. The end operation will only be written if a warning or worse occured.
+            /// </summary>
+            /// <remarks>This has no effect on the start operation being written.</remarks>
+            WarningOrWorse = 4,
+
+            /// <summary>
+            /// Write a log entry for the end of the operation but only if a warning or worse occurred.
+            /// </summary>
+            EndOnlyOnWarningOrWorse = 6,
+
+            /// <summary>
+            /// Write a log entry for both the start and end of the operation, but only write the end entry if a warning or worse occurred.
+            /// </summary>
+            StartAndEndOnlyOnWarningOrWorse = 7,
+
+            /// <summary>
+            /// Use in combination with writing the end operation. The end operation will only be written if an error occured.
+            /// </summary>
+            /// <remarks>This has no effect on the start operation being written.</remarks>
+            Error = 8,
+
+            /// <summary>
+            /// Write a log entry for the end of the operation but only if an error occurred.
+            /// </summary>
+            EndOnlyOnError = 10,
+
+            /// <summary>
+            /// Write a log entry for both the start and end of the operation, but only write the end entry if an error occurred.
+            /// </summary>
+            StartAndEndOnlyOnError = 11
         }
 
         private const string BeginOperationMessage =

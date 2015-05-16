@@ -6,15 +6,14 @@ namespace Serilog.Context
     {
         internal static bool ShouldWriteStart(this OperationContext.LogMode logMode)
         {
-            return logMode == OperationContext.LogMode.StartAndEnd 
-                || logMode == OperationContext.LogMode.StartOnly;
+            return logMode.HasFlag(OperationContext.LogMode.Start);
         }
 
         internal static bool ShouldWriteEnd(this OperationContext.LogMode logMode, LogEventLevel logLevel = LogEventLevel.Verbose)
         {
-            return logMode == OperationContext.LogMode.EndOnly 
-                || logMode == OperationContext.LogMode.StartAndEnd 
-                || (logMode == OperationContext.LogMode.EndOnlyOnWarning && logLevel >= LogEventLevel.Warning);
+            return logMode.HasFlag(OperationContext.LogMode.End)
+                   && (!logMode.HasFlag(OperationContext.LogMode.WarningOrWorse) || logLevel >= LogEventLevel.Warning)
+                   && (!logMode.HasFlag(OperationContext.LogMode.Error) || logLevel >= LogEventLevel.Error);
         }
     }
 }

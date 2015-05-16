@@ -15,7 +15,9 @@
     <file src="Serilog.FullNetFx.Extensions\Serilog.FullNetFx.Extensions.dll" target="lib\net45" />-->
 
     <file src="bin\Release\Serilog.Extensions.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+    <file src="bin\Release\Serilog.Extensions.xml" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
     <file src="bin\Release\Serilog.Extensions.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Extensions.xml" target="lib\net45" />
     <file src="..\Serilog.FullNetFx.Extensions\bin\Release\Serilog.FullNetFx.Extensions.dll" target="lib\net45" />
   </files>
 </package>

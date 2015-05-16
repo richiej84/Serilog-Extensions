@@ -15,12 +15,34 @@ namespace Serilog.Context
     /// </summary>
     public sealed class OperationContext : IDisposable
     {
+        /// <summary>
+        /// Determines what log entries should be written for an operation.
+        /// </summary>
         public enum LogMode
         {
+            /// <summary>
+            /// Write log entries for both the start and end of the operation.
+            /// </summary>
             StartAndEnd,
+
+            /// <summary>
+            /// Write a log entry only for the start of the operation.
+            /// </summary>
             StartOnly,
+
+            /// <summary>
+            /// Write a log entry only for the end of the operation.
+            /// </summary>
             EndOnly,
+
+            /// <summary>
+            /// Write a log entry only for the end of the operation and only if it's a non-successful outcome.
+            /// </summary>
             EndOnlyOnWarning,
+
+            /// <summary>
+            /// Write no log entries for the operation.
+            /// </summary>
             None
         }
 

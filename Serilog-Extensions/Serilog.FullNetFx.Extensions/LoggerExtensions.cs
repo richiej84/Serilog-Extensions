@@ -54,16 +54,18 @@ namespace Serilog
         /// <param name="logger">The logger.</param>
         /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
         /// <param name="propertyBag">A colletion of additional properties to associate with the current operation. This is typically an anonymous type.</param>
+        /// <param name="logMode">Indicates what, if any, log entries should be writen and when.</param>
         /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
         public static OperationContext BeginOperation(
             this ILogger logger,
             string identifier,
-            object propertyBag)
+            object propertyBag,
+            OperationContext.LogMode logMode = OperationContext.LogMode.EndOnlyOnWarning)
         {
 
             return new OperationContext(logger,
                                         LogEventLevel.Debug,
-                                        OperationContext.LogMode.EndOnlyOnWarning,
+                                        logMode,
                                         null,
                                         identifier,
                                         null,
@@ -77,15 +79,17 @@ namespace Serilog
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
+        /// <param name="logMode">Indicates what, if any, log entries should be writen and when.</param>
         /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
         public static OperationContext BeginOperation(
             this ILogger logger,
-            string identifier)
+            string identifier,
+            OperationContext.LogMode logMode = OperationContext.LogMode.EndOnlyOnWarning)
         {
 
             return new OperationContext(logger,
                                         LogEventLevel.Debug,
-                                        OperationContext.LogMode.EndOnlyOnWarning,
+                                        logMode,
                                         null,
                                         identifier,
                                         null,

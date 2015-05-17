@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Serilog.Context;
 
 namespace Serilog.Extensions.Console
@@ -19,6 +20,8 @@ namespace Serilog.Extensions.Console
             TestOperationContextLogging();
             System.Console.WriteLine();
             TestOperationContextLogging_CustomStart();
+            System.Console.WriteLine();
+            TestTimedOperation();
 
             System.Console.WriteLine();
             System.Console.WriteLine("Done");
@@ -48,6 +51,28 @@ namespace Serilog.Extensions.Console
             }))
             {
                 _logger.Information("Inside log context");
+            }
+        }
+
+        static void TestTimedOperation()
+        {
+            using (_logger.BeginTimedOperation("TestTimedOperation", TimeSpan.FromSeconds(1)))
+            {
+                Thread.Sleep(1000);
+            }
+        }
+
+        static void TestTimedOperationThrowingException()
+        {
+            try
+            {
+                using (_logger.BeginOperation("TestTimedOperationThrowingException"))
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception)
+            {
             }
         }
     }

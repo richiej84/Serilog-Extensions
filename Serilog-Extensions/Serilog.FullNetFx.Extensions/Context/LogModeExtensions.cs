@@ -4,16 +4,16 @@ namespace Serilog.Context
 {
     internal static class LogModeExtensions
     {
-        internal static bool ShouldWriteStart(this OperationContext.LogMode logMode)
+        internal static bool ShouldWriteStart(this OperationContextLogMode logMode)
         {
-            return logMode.HasFlag(OperationContext.LogMode.Start);
+            return logMode.HasFlag(OperationContextLogMode.Start);
         }
 
-        internal static bool ShouldWriteEnd(this OperationContext.LogMode logMode, LogEventLevel logLevel = LogEventLevel.Verbose)
+        internal static bool ShouldWriteEnd(this OperationContextLogMode logMode, LogEventLevel logLevel = LogEventLevel.Verbose)
         {
-            return logMode.HasFlag(OperationContext.LogMode.End)
-                   && (!logMode.HasFlag(OperationContext.LogMode.WarningOrWorse) || logLevel >= LogEventLevel.Warning)
-                   && (!logMode.HasFlag(OperationContext.LogMode.Error) || logLevel >= LogEventLevel.Error);
+            return logMode.HasFlag(OperationContextLogMode.End)
+                   && (!logMode.HasFlag(OperationContextLogMode.WarningOrWorse) || logLevel >= LogEventLevel.Warning)
+                   && (!logMode.HasFlag(OperationContextLogMode.Error) || logLevel >= LogEventLevel.Error);
         }
     }
 }

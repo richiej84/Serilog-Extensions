@@ -51,13 +51,18 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Context\BaseOperationContext.cs" />
     <Compile Include="Context\ImmutableStack.cs" />
+    <Compile Include="Context\IOperationContext.cs" />
     <Compile Include="Context\LogModeExtensions.cs" />
     <Compile Include="Context\OperationContext.cs" />
     <Compile Include="Context\OperationContextData.cs" />
+    <Compile Include="Context\OperationContextLogMode.cs" />
     <Compile Include="Context\OperationContextOptions.cs" />
-    <Compile Include="Context\OperationLogWriter.cs" />
     <Compile Include="Context\OperationOutcome.cs" />
+    <Compile Include="Context\TimedOperationContext.cs" />
+    <Compile Include="Context\TimedOperationContextData.cs" />
+    <Compile Include="Context\TimedOperationContextOptions.cs" />
     <Compile Include="Enrichers\OperationContextEnricher.cs" />
     <Compile Include="LoggerConfigurationExtensions.cs" />
     <Compile Include="LoggerExtensions.cs" />

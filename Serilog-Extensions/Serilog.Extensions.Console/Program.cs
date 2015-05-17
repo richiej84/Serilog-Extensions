@@ -17,10 +17,10 @@ namespace Serilog.Extensions.Console
                 .CreateLogger();
              _logger = Log.ForContext<Program>();
             
-            TestOperationContextLogging();
-            System.Console.WriteLine();
-            TestOperationContextLogging_CustomStart();
-            System.Console.WriteLine();
+            //TestOperationContextLogging();
+            //System.Console.WriteLine();
+            //TestOperationContextLogging_CustomStart();
+            //System.Console.WriteLine();
             TestTimedOperation();
 
             System.Console.WriteLine();
@@ -56,7 +56,15 @@ namespace Serilog.Extensions.Console
 
         static void TestTimedOperation()
         {
-            using (_logger.BeginTimedOperation("TestTimedOperation", TimeSpan.FromSeconds(1)))
+            using (_logger.BeginTimedOperation("TestTimedOperation", new TimedOperationContextOptions { LogMode = OperationContextLogMode.StartAndEnd}))
+            {
+                Thread.Sleep(1000);
+            }
+        }
+
+        static void TestTimedOperationExceeding()
+        {
+            using (_logger.BeginTimedOperation("TestTimedOperationExceeding", TimeSpan.FromSeconds(1)))
             {
                 Thread.Sleep(1000);
             }

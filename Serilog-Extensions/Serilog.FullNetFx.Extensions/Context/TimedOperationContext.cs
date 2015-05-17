@@ -57,10 +57,12 @@ namespace Serilog.Context
                     Options.OperationCompletedButExceededTimeoutLogWriter(Logger, GetContextData(logLevel));
                 }
             }
-            // Otherwise just fallback to the default implementation
             else
             {
-                base.OnSuccessfulCompletion();
+                if (Options.LogMode.ShouldWriteEnd(Options.LogLevel))
+                {
+                    Options.OperationCompletedLogWriter(Logger, GetContextData());
+                }
             }
         }
 

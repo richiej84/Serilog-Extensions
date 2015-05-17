@@ -15,17 +15,17 @@ namespace Serilog.Context
         /// <summary>
         /// The default log writer that is used when the operation completes.
         /// </summary>
-        public new static readonly Action<ILogger, TimedOperationContextData> DefaultOperationCompletedLogWriter = OnOperationCompleted;
+        public static readonly Action<ILogger, TimedOperationContextData> DefaultTimedOperationCompletedLogWriter = OnTimedOperationCompleted;
 
         /// <summary>
         /// The default log writer that is used when the operation fails.
         /// </summary>
-        public new static readonly Action<ILogger, TimedOperationContextData> DefaultOperationFailedLogWriter = OnOperationFailed;
+        public static readonly Action<ILogger, TimedOperationContextData> DefaultTimedOperationFailedLogWriter = OnTimedOperationFailed;
 
         /// <summary>
         /// The default log writer that is used when the operation completes but exceeds the timeout.
         /// </summary>
-        public static readonly Action<ILogger, TimedOperationContextData> DefaultOperationCompletedButExceededTimeoutLogWriter = OnOperationCompletedButExceededTimeout;
+        public static readonly Action<ILogger, TimedOperationContextData> DefaultTimedOperationCompletedButExceededTimeoutLogWriter = OnTimedOperationCompletedButExceededTimeout;
 
         /// <summary>
         /// Initialises a new <see cref="TimedOperationContextOptions"/> instance.
@@ -42,9 +42,9 @@ namespace Serilog.Context
             : base(options)
         {
             WarnIfExceeds = null;
-            OperationCompletedLogWriter = DefaultOperationCompletedLogWriter;
-            OperationFailedLogWriter = DefaultOperationFailedLogWriter;
-            OperationCompletedButExceededTimeoutLogWriter = DefaultOperationCompletedButExceededTimeoutLogWriter;
+            OperationCompletedLogWriter = DefaultTimedOperationCompletedLogWriter;
+            OperationFailedLogWriter = DefaultTimedOperationFailedLogWriter;
+            OperationCompletedButExceededTimeoutLogWriter = DefaultTimedOperationCompletedButExceededTimeoutLogWriter;
         }
 
         /// <summary>
@@ -68,25 +68,34 @@ namespace Serilog.Context
         /// </summary>
         public Action<ILogger, TimedOperationContextData> OperationCompletedButExceededTimeoutLogWriter { get; set; }
 
-        private static void OnOperationCompleted(ILogger logger, TimedOperationContextData data)
+        private static void OnTimedOperationCompleted(ILogger logger, TimedOperationContextData data)
         {
-            logger.Write(data.LogLevel, OperationCompletedMessage, data.Identifier, data.Duration, data.Duration.TotalMilliseconds);
+            logger.Write(data.LogLevel,
+                         OperationCompletedMessage,
+                         data.Identifier,
+                         data.Duration.ToString("g"),
+                         data.Duration.TotalMilliseconds.ToString("f3"));
         }
 
-        private static void OnOperationFailed(ILogger logger, TimedOperationContextData data)
+        private static void OnTimedOperationFailed(ILogger logger, TimedOperationContextData data)
         {
             logger.Write(data.LogLevel, OperationFailedMessage, data.Identifier);
         }
 
-        private static void OnOperationCompletedButExceededTimeout(ILogger logger, TimedOperationContextData data)
+        private static void OnTimedOperationCompletedButExceededTimeout(ILogger logger, TimedOperationContextData data)
         {
             if(data.MaxDuration.HasValue)
-            { 
-                logger.Write(data.LogLevel, OperationCompletedButExceededTimeoutMessage, data.Identifier, data.Duration, data.Duration.TotalMilliseconds, data.MaxDuration);
+            {
+                logger.Write(data.LogLevel,
+                             OperationCompletedButExceededTimeoutMessage,
+                             data.Identifier,
+                             data.Duration.ToString("g"),
+                             data.Duration.TotalMilliseconds.ToString("f3"),
+                             data.MaxDuration);
             }
             else
             {
-                OnOperationCompleted(logger, data);
+                OnTimedOperationCompleted(logger, data);
             }
         }
     }

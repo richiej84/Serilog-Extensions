@@ -19,5 +19,6 @@
     <file src="bin\Release\Serilog.Extensions.dll" target="lib\net45" />
     <file src="bin\Release\Serilog.Extensions.xml" target="lib\net45" />
     <file src="..\Serilog.FullNetFx.Extensions\bin\Release\Serilog.FullNetFx.Extensions.dll" target="lib\net45" />
+    <file src="..\Serilog.FullNetFx.Extensions\bin\Release\Serilog.FullNetFx.Extensions.xml" target="lib\net45" />
   </files>
 </package>

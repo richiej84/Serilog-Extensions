@@ -21,7 +21,7 @@ namespace Serilog.Context
                                        string description,
                                        object propertyBag,
                                        TimedOperationContextOptions options)
-            : base(logger, identifier, description, propertyBag, options)
+            : base(logger, identifier, description, propertyBag, options ?? new TimedOperationContextOptions())
         {
             _sw = new Stopwatch();
         }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extensions", "Serilog.Extensions\Serilog.Extensions.csproj", "{C178B312-DA66-4027-A5F5-EA839091BD0C}"
 EndProject
@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		GlobalAssemblyInfo.cs = GlobalAssemblyInfo.cs
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extensions.Console", "Serilog.Extensions.Console\Serilog.Extensions.Console.csproj", "{FF654803-F27B-4F66-A107-72CD11DCDB50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,10 @@ Global
 		{465E2E95-EF14-444A-8D0D-E6E396C3EF56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{465E2E95-EF14-444A-8D0D-E6E396C3EF56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{465E2E95-EF14-444A-8D0D-E6E396C3EF56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF654803-F27B-4F66-A107-72CD11DCDB50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF654803-F27B-4F66-A107-72CD11DCDB50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF654803-F27B-4F66-A107-72CD11DCDB50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF654803-F27B-4F66-A107-72CD11DCDB50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

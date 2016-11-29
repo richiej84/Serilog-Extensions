@@ -13,63 +13,26 @@ namespace Serilog
         /// Begins an operation that should be declared inside a using block or appropriately disposed of when completed.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
-        /// <param name="propertyBag">A colletion of additional properties to associate with the current operation. This is typically an anonymous type.</param>
         /// <param name="description">A description for this operation.</param>
-        /// <param name="level">The level used to write the operation details to the log. By default this is the information level.</param>
-        /// <param name="logMode">Indicates what, if any, log entries should be writen and when.</param>
-        /// <param name="warnIfExceeds">Specifies a limit, if it takes more than this limit, the level will be set to warning. By default this is not used.</param>
-        /// <param name="autoSucceedOnExit">Specifies whether or not the operation should be marked with an outcome of <see cref="OperationOutcome.Success"/> if it completes without exception.</param>
-        /// <param name="autoFailOnException">Specifies whether or not the operation should be marked with an outcome of <see cref="OperationOutcome.Fail"/> if an exception is detected.</param>
-        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
-        public static OperationContext BeginOperation(
-            this ILogger logger,
-            string description = null,
-            string identifier = null,
-            object propertyBag = null,
-            LogEventLevel level = LogEventLevel.Debug,
-            OperationContext.LogMode logMode = OperationContext.LogMode.EndOnlyOnWarning,
-            TimeSpan? warnIfExceeds = null,
-            bool autoSucceedOnExit = true,
-            bool autoFailOnException = true)
-        {
-            object operationIdentifier = identifier;
-            if (string.IsNullOrEmpty(identifier))
-                operationIdentifier = Guid.NewGuid();
-
-            return new OperationContext(logger,
-                                        level,
-                                        logMode,
-                                        warnIfExceeds,
-                                        operationIdentifier,
-                                        description,
-                                        autoSucceedOnExit,
-                                        autoFailOnException,
-                                        propertyBag);
-        }
-
-        /// <summary>
-        /// Begins an operation that should be declared inside a using block or appropriately disposed of when completed.
-        /// </summary>
-        /// <param name="logger">The logger.</param>
         /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
         /// <param name="propertyBag">A colletion of additional properties to associate with the current operation. This is typically an anonymous type.</param>
+        /// <param name="options">Configuration options for the operation context.</param>
         /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
-        public static OperationContext BeginOperation(
+        public static IOperationContext BeginOperation(
             this ILogger logger,
             string identifier,
-            object propertyBag)
+            string description,
+            object propertyBag = null,
+            OperationContextOptions options = null)
         {
+            if (string.IsNullOrEmpty(identifier))
+                identifier = Guid.NewGuid().ToString();
 
             return new OperationContext(logger,
-                                        LogEventLevel.Debug,
-                                        OperationContext.LogMode.EndOnlyOnWarning,
-                                        null,
                                         identifier,
-                                        null,
-                                        true,
-                                        true,
-                                        propertyBag);
+                                        description,
+                                        propertyBag,
+                                        options).Start();
         }
 
         /// <summary>
@@ -77,21 +40,181 @@ namespace Serilog
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
+        /// <param name="propertyBag">A colletion of additional properties to associate with the current operation. This is typically an anonymous type.</param>
+        /// <param name="options">Configuration options for the operation context.</param>
         /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
-        public static OperationContext BeginOperation(
+        public static IOperationContext BeginOperation(
             this ILogger logger,
-            string identifier)
+            string identifier,
+            object propertyBag,
+            OperationContextOptions options = null)
         {
-
             return new OperationContext(logger,
-                                        LogEventLevel.Debug,
-                                        OperationContext.LogMode.EndOnlyOnWarning,
-                                        null,
                                         identifier,
                                         null,
-                                        true,
-                                        true,
-                                        null);
+                                        propertyBag,
+                                        options).Start();
+        }
+
+        /// <summary>
+        /// Begins an operation that should be declared inside a using block or appropriately disposed of when completed.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
+        /// <param name="options">Configuration options for the operation context.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static IOperationContext BeginOperation(
+            this ILogger logger,
+            string identifier,
+            OperationContextOptions options = null)
+        {
+            return new OperationContext(logger,
+                                        identifier,
+                                        null,
+                                        null,
+                                        options).Start();
+        }
+
+        /// <summary>
+        /// Begins an timed operation that should be declared inside a using block or appropriately disposed of when completed.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="description">A description for this operation.</param>
+        /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
+        /// <param name="propertyBag">A colletion of additional properties to associate with the current operation. This is typically an anonymous type.</param>
+        /// <param name="options">Configuration options for the operation context.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static IOperationContext BeginTimedOperation(
+            this ILogger logger,
+            string identifier,
+            string description,
+            object propertyBag = null,
+            TimedOperationContextOptions options = null)
+        {
+            if (string.IsNullOrEmpty(identifier))
+                identifier = Guid.NewGuid().ToString();
+
+            return new TimedOperationContext(logger,
+                                             identifier,
+                                             description,
+                                             propertyBag,
+                                             options).Start();
+        }
+
+        /// <summary>
+        /// Begins an timed operation that should be declared inside a using block or appropriately disposed of when completed.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="description">A description for this operation.</param>
+        /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
+        /// <param name="warnIfExceeds">Specifies a time limit for the operation.</param>
+        /// <param name="propertyBag">A colletion of additional properties to associate with the current operation. This is typically an anonymous type.</param>
+        /// <param name="options">Configuration options for the operation context.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static IOperationContext BeginTimedOperation(
+            this ILogger logger,
+            string identifier,
+            string description,
+            TimeSpan warnIfExceeds,
+            object propertyBag = null,
+            OperationContextOptions options = null)
+        {
+            if (string.IsNullOrEmpty(identifier))
+                identifier = Guid.NewGuid().ToString();
+
+            var timedOperationOptions = new TimedOperationContextOptions(options) {WarnIfExceeds = warnIfExceeds};
+
+            return new TimedOperationContext(logger,
+                                             identifier,
+                                             description,
+                                             propertyBag,
+                                             timedOperationOptions).Start();
+        }
+
+        /// <summary>
+        /// Begins an timed operation that should be declared inside a using block or appropriately disposed of when completed.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
+        /// <param name="propertyBag">A colletion of additional properties to associate with the current operation. This is typically an anonymous type.</param>
+        /// <param name="options">Configuration options for the operation context.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static IOperationContext BeginTimedOperation(
+            this ILogger logger,
+            string identifier,
+            object propertyBag,
+            TimedOperationContextOptions options = null)
+        {
+            return new TimedOperationContext(logger,
+                                             identifier,
+                                             null,
+                                             propertyBag,
+                                             options).Start();
+        }
+
+        /// <summary>
+        /// Begins an timed operation that should be declared inside a using block or appropriately disposed of when completed.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
+        /// <param name="warnIfExceeds">Specifies a time limit for the operation.</param>
+        /// <param name="propertyBag">A colletion of additional properties to associate with the current operation. This is typically an anonymous type.</param>
+        /// <param name="options">Configuration options for the operation context.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static IOperationContext BeginTimedOperation(
+            this ILogger logger,
+            string identifier,
+            TimeSpan warnIfExceeds,
+            object propertyBag,
+            OperationContextOptions options = null)
+        {
+            var timedOperationOptions = new TimedOperationContextOptions(options) { WarnIfExceeds = warnIfExceeds };
+            return new TimedOperationContext(logger,
+                                             identifier,
+                                             null,
+                                             propertyBag,
+                                             timedOperationOptions).Start();
+        }
+
+        /// <summary>
+        /// Begins an timedoperation that should be declared inside a using block or appropriately disposed of when completed.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
+        /// <param name="options">Configuration options for the operation context.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static IOperationContext BeginTimedOperation(
+            this ILogger logger,
+            string identifier,
+            TimedOperationContextOptions options = null)
+        {
+            return new TimedOperationContext(logger,
+                                             identifier,
+                                             null,
+                                             null,
+                                             options).Start();
+        }
+
+        /// <summary>
+        /// Begins an timedoperation that should be declared inside a using block or appropriately disposed of when completed.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="identifier">The identifier used for the operation. If not specified, a random guid will be used.</param>
+        /// <param name="warnIfExceeds">Specifies a time limit for the operation.</param>
+        /// <param name="options">Configuration options for the operation context.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static IOperationContext BeginTimedOperation(
+            this ILogger logger,
+            string identifier,
+            TimeSpan warnIfExceeds,
+            OperationContextOptions options = null)
+        {
+            var timedOperationOptions = new TimedOperationContextOptions(options) { WarnIfExceeds = warnIfExceeds };
+            return new TimedOperationContext(logger,
+                                             identifier,
+                                             null,
+                                             null,
+                                             timedOperationOptions).Start();
         }
     }
 }
